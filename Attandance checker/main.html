@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Attendance Checker</title>
+    <style>
+        body {
+    background-image: url('faded_gallery-OfdOEdGYiuk-unsplash.jpg');
+    background-size: cover;        
+    background-position: center;   
+    background-attachment: fixed;  
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+       .container {
+    width: 80%;
+    max-width: 700px;
+    margin: 50px auto;
+    background-color: rgba(255, 255, 255, 0.2); 
+    backdrop-filter: blur(10px); 
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #e4e4e4;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background-color: #049cab;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .alert {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #5bc0de;
+            font-weight: bold;
+        }
+
+        .highlight {
+            font-weight: bold;
+            font-size: 18px;
+            color: #FF5733;
+        }
+
+        .highlight-bunk, .highlight-attend {
+            font-weight: bold;
+            font-size: 18px;
+            color: #FF9800;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>College Attendance Checker</h1>
+        
+        <div class="input-group">
+            <label for="classesConducted">Total Classes Conducted</label>
+            <input type="number" id="classesConducted" placeholder="Enter number of classes conducted" />
+        </div>
+
+        <div class="input-group">
+            <label for="classesAttended">Classes Attended</label>
+            <input type="number" id="classesAttended" placeholder="Enter number of classes attended" />
+        </div>
+
+        <div class="input-group">
+            <label for="eligibilityPercentage">Eligibility Attendance Percentage</label>
+            <input type="number" id="eligibilityPercentage" placeholder="Enter eligibility attendance percentage" />
+        </div>
+
+        <button class="btn" onclick="calculateAttendance()">Check Attendance</button>
+
+        <div id="result" class="result">
+            <p id="attendanceMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        function calculateAttendance() {
+            const classesConducted = parseInt(document.getElementById('classesConducted').value);
+            const classesAttended = parseInt(document.getElementById('classesAttended').value);
+            const eligibilityPercentage = parseFloat(document.getElementById('eligibilityPercentage').value);
+
+            if (isNaN(classesConducted) || isNaN(classesAttended) || isNaN(eligibilityPercentage)) {
+                alert('Please enter valid numbers.');
+                return;
+            }
+
+            if (classesConducted === 0) {
+                alert('Total classes conducted cannot be zero.');
+                return;
+            }
+
+            const currentPercentage = (classesAttended / classesConducted) * 100;
+
+            const requiredAttendance = (eligibilityPercentage / 100) * classesConducted;
+
+            let message = '';
+            let highlightMessage = `<span class="highlight">${currentPercentage.toFixed(2)}%</span>`;
+
+            if (currentPercentage < eligibilityPercentage) {
+                const classesToAttend = Math.ceil(requiredAttendance - classesAttended);
+                message = `Sorry! Your current attendance is ${highlightMessage}, which is below the required ${eligibilityPercentage}%. You need to  <span class="highlight-attend">attend ${classesToAttend}</span> more classes to reach the required percentage.`;
+            } else {
+                const bunkableClasses = classesAttended - requiredAttendance;
+
+                if (bunkableClasses >= 0) {
+                    message = `Hurry! Your current attendance is ${highlightMessage}, which is above the required ${eligibilityPercentage}%. You can still <span class="highlight-bunk">bunk ${Math.floor(bunkableClasses)}</span> classes without falling below the eligibility threshold.`;
+                } else {
+                    message = `Hurry! You're already eligible! No need to attend more classes. Your current attendance is ${highlightMessage}.`;
+                }
+            }
+            document.getElementById('attendanceMessage').innerHTML = message;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
